@@ -72,9 +72,13 @@ Notes:
 
 ## Live data note
 
-The dashboard's numbers live in the `DATA` object at the bottom of `index.html`
-(fetched from BLS, the Federal Reserve, and U.S. Census). To make the page self-updating,
-replace that object with a fetch to FRED (with your API key) or wire it to the existing
-economicsguru.com pipeline. Every indicator keeps the same shape, so nothing else changes.
-The Inflation (CPI) tile is intentionally left in the "connect your feed" state as the
-first one to wire up.
+The dashboard ships with a correct snapshot in the `DATA` object at the bottom of `index.html`,
+and on load it calls `loadLive()`, which fetches a summary JSON from economicsguru.com and merges
+the six indicators in by `id`. The merge is non-destructive: if the feed is missing or unreachable,
+the snapshot stays as-is, so the page is never blank or wrong.
+
+To make it fully self-updating, publish that summary file on economicsguru.com and point
+`SUMMARY_URL` (top of the `loadLive` block) at it. The expected JSON shape — plus the CORS header
+economicsguru needs to send — is documented in the comment right above `SUMMARY_URL`. Only the
+values that change (value, prior, as-of, spark) go in the JSON; labels, units, and links stay in
+`DATA`. Because both sites then read the same numbers, they can't disagree.

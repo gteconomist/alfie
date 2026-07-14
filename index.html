@@ -372,46 +372,52 @@ function countUp(){
     requestAnimationFrame(step);
   });
 }
-// ---- Live refresh: Inflation (CPI). The tile ships with a real current snapshot (see DATA above);
-// this best-effort refresh upgrades it in place when the data is reachable. A browser can't call
-// BLS/FRED directly (no CORS on those APIs), so we try BLS and then a read-only proxy — and we
-// NEVER blank the tile if both are unavailable. For true auto-updating across every tile, wire
-// DATA to FRED (your key) or the economicsguru pipeline through a small backend.
-async function loadCPI(){
-  const ind=DATA.indicators.find(i=>i.id==="inflation");
-  if(!ind)return;
-  const series="CUUR0000SA0",yr=new Date().getFullYear();
-  const parse=j=>{
-    if(!j||j.status!=="REQUEST_SUCCEEDED"||!j.Results||!j.Results.series||!j.Results.series[0].data.length)return null;
-    const rows=j.Results.series[0].data
-      .filter(d=>/^M(0[1-9]|1[0-2])$/.test(d.period))
-      .map(d=>({y:+d.year,m:+d.period.slice(1),v:+d.value}))
-      .sort((a,b)=>b.y-a.y||b.m-a.m);
-    const idx={};rows.forEach(r=>idx[r.y+"-"+r.m]=r.v);
-    const out=[];
-    for(const r of rows){const p=idx[(r.y-1)+"-"+r.m];if(p)out.push({r,val:(r.v/p-1)*100});if(out.length>=6)break;}
-    return out.length>=2?out:null;
-  };
-  const sources=[
-    ()=>fetch("https://api.bls.gov/publicAPI/v2/timeseries/data/",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({seriesid:[series],startyear:String(yr-2),endyear:String(yr)})}),
-    ()=>fetch("https://api.allorigins.win/raw?url="+encodeURIComponent("https://api.bls.gov/publicAPI/v2/timeseries/data/"+series+"?startyear="+(yr-2)+"&endyear="+yr))
-  ];
-  for(const get of sources){
-    try{
-      const res=await get();if(!res.ok)continue;
-      const data=parse(await res.json());if(!data)continue;
-      const latest=data[0],prior=data[1];
-      ind.value=+latest.val.toFixed(1);
-      ind.prior=+prior.val.toFixed(1);
-      ind.asof=latest.r.y+"-"+String(latest.r.m).padStart(2,"0")+"-01";
-      ind.spark=data.map(s=>+s.val.toFixed(2)).reverse();
-      renderCard(ind);buildTape();
-      const note=document.getElementById("asof-note");
-      const latestAll=DATA.indicators.map(i=>i.asof).sort().slice(-1)[0];
-      if(note)note.textContent="Latest release: "+monthYear(latestAll);
-      return;
-    }catch(e){/* try next source, otherwise keep the snapshot */}
-  }
+// ---- Live refresh: all six indicators, pulled from the economicsguru summary feed.
+// The tiles ship with a correct snapshot (the DATA above); this fetches the same numbers
+// economicsguru already computes each night and merges them in by id, so the two sites can
+// never disagree. It is non-destructive: if the feed is missing or unreachable, the snapshot
+// stays exactly as-is. No API keys, no scraping.
+//
+// economicsguru just needs to publish this file (and send `Access-Control-Allow-Origin: *`,
+// or specifically https://alfie.com). Shape — only the values that change; labels/units/links
+// stay defined in DATA above:
+//   { "updated": "2026-07-14",
+//     "indicators": [
+//       { "id":"payrolls",    "value":57,   "prior":129,  "asof":"2026-06-01", "spark":[148,129,57] },
+//       { "id":"unemployment","value":4.2,  "prior":4.3,  "asof":"2026-06-01", "spark":[4.3,4.3,4.2] },
+//       { "id":"retail",      "value":6.9,  "prior":4.8,  "asof":"2026-05-01", "spark":[4.8,6.9] },
+//       { "id":"fedfunds",    "value":3.62, "prior":3.62, "asof":"2026-07-10", "spark":[3.62,3.62] },
+//       { "id":"treasury10",  "value":4.56, "prior":4.54, "asof":"2026-07-10", "spark":[4.54,4.56] },
+//       { "id":"inflation",   "value":3.5,  "prior":4.2,  "asof":"2026-06-01", "spark":[2.4,2.4,3.3,3.8,4.2,3.5] }
+//     ] }
+// ids must match DATA above. "prior" may be null. "ctx" is optional. Change SUMMARY_URL to the real path.
+const SUMMARY_URL="https://economicsguru.com/api/summary.json";
+async function loadLive(){
+  try{
+    const res=await fetch(SUMMARY_URL,{cache:"no-store"});
+    if(!res.ok)return;
+    const j=await res.json();
+    if(!j||!Array.isArray(j.indicators))return;
+    let changed=false;
+    j.indicators.forEach(u=>{
+      if(!u||!u.id)return;
+      const ind=DATA.indicators.find(i=>i.id===u.id);
+      if(!ind)return;
+      if(typeof u.value==="number")ind.value=u.value;
+      if("prior" in u)ind.prior=(typeof u.prior==="number")?u.prior:null;
+      if(u.asof)ind.asof=u.asof;
+      if(Array.isArray(u.spark))ind.spark=u.spark;
+      if(typeof u.ctx==="string")ind.ctx=u.ctx;
+      renderCard(ind);changed=true;
+    });
+    if(!changed)return;
+    if(j.updated)DATA.updated=j.updated;
+    buildTape();
+    const upd=new Date((DATA.updated||"")+"T00:00:00"),updEl=document.getElementById("updated");
+    if(updEl&&!isNaN(upd))updEl.innerHTML='<span class="dot" style="display:inline-block;margin-right:7px;vertical-align:middle"></span>Updated '+MONTHS[upd.getMonth()]+" "+upd.getDate()+", "+upd.getFullYear();
+    const latest=DATA.indicators.map(i=>i.asof).sort().slice(-1)[0],note=document.getElementById("asof-note");
+    if(note&&latest)note.textContent="Latest release: "+monthYear(latest);
+  }catch(e){/* keep the built-in snapshot */}
 }
 // ---- This week's read: ships with the three most recent posts as a snapshot (rendered in #posts).
 // This best-effort refresh replaces them in place when reachable — Substack's archive API first,
@@ -459,7 +465,7 @@ function wireSubscribe(){
   });
 }
 build();
-loadCPI();
+loadLive();
 loadPosts();
 wireSubscribe();
 </script>
