@@ -267,23 +267,23 @@ const DATA = {
   updated: "2026-07-14",
   indicators: [
     { id:"payrolls", label:"Job growth", unit:"K", asof:"2026-06-01", source:"BLS",
-      value:432, prior:685, fmt:"signed_k", good:"up",
-      ctx:"jobs added in June", spark:[-213,486,537,962,685,432], href:"https://economicsguru.com" },
+      value:57, prior:129, fmt:"signed_k", good:"up",
+      ctx:"jobs added in June", spark:[148,129,57], href:"https://economicsguru.com/labor/" },
     { id:"unemployment", label:"Unemployment", unit:"%", asof:"2026-06-01", source:"BLS",
       value:4.2, prior:4.3, fmt:"pct", good:"down",
-      ctx:"vs 4.3% prior", spark:[4.1,4.3,4.3,4.4,4.5,4.4,4.3,4.4,4.3,4.3,4.3,4.2], href:"https://economicsguru.com" },
+      ctx:"vs 4.3% prior", spark:[4.3,4.3,4.2], href:"https://economicsguru.com/labor/" },
     { id:"retail", label:"Retail sales", unit:"% y/y", asof:"2026-05-01", source:"Census",
-      value:5.7, prior:4.7, fmt:"pct", good:"up",
-      ctx:"year-over-year growth", spark:[3.8,5.2,4.7,5.7], href:"https://economicsguru.com" },
-    { id:"fedfunds", label:"Fed funds rate", unit:"%", asof:"2026-06-01", source:"Fed. Reserve",
-      value:3.63, prior:3.63, fmt:"pct", good:null,
-      ctx:"effective rate", spark:[3.88,3.72,3.64,3.64,3.64,3.64,3.63,3.63], href:"https://economicsguru.com" },
-    { id:"treasury10", label:"10-yr Treasury", unit:"%", asof:"2026-06-01", source:"Fed. Reserve",
-      value:4.47, prior:4.48, fmt:"pct", good:null,
-      ctx:"constant maturity", spark:[4.09,4.14,4.21,4.13,4.25,4.32,4.48,4.47], href:"https://economicsguru.com" },
+      value:6.9, prior:4.8, fmt:"pct", good:"up",
+      ctx:"year-over-year growth", spark:[4.8,6.9], href:"https://economicsguru.com/consumer/retail-confidence/" },
+    { id:"fedfunds", label:"Fed funds rate", unit:"%", asof:"2026-07-10", source:"Fed. Reserve",
+      value:3.62, prior:3.62, fmt:"pct", good:null,
+      ctx:"effective rate", spark:[3.62,3.62], href:"https://economicsguru.com/rates/treasuries/" },
+    { id:"treasury10", label:"10-yr Treasury", unit:"%", asof:"2026-07-10", source:"Fed. Reserve",
+      value:4.56, prior:4.54, fmt:"pct", good:null,
+      ctx:"constant maturity", spark:[4.54,4.56], href:"https://economicsguru.com/rates/treasuries/" },
     { id:"inflation", label:"Inflation (CPI)", unit:"% y/y", asof:"2026-06-01", source:"BLS",
       value:3.5, prior:4.2, fmt:"pct", good:"down",
-      ctx:"year-over-year", spark:[2.4,2.4,3.3,3.8,4.2,3.5], href:"https://economicsguru.com" }
+      ctx:"year-over-year", spark:[2.4,2.4,3.3,3.8,4.2,3.5], href:"https://economicsguru.com/inflation/cpi/" }
   ]
 };
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
