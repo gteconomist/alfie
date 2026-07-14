@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfie Meek, Ph.D. — The Economy at a Glance</title>
+<meta name="description" content="A plain-language read on the U.S. economy from economist Dr. Alfie Meek — jobs, inflation, rates, and spending, refreshed from the latest federal releases.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* dashboard-specific components */
+  .mast-meta{text-align:right;color:var(--slate);font-size:12px;line-height:1.5}
+  .mast-meta .live{display:inline-flex;align-items:center;gap:7px;color:var(--bone-dim)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--pos);animation:pulse 2.6s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(87,176,131,.55)}70%{box-shadow:0 0 0 7px rgba(87,176,131,0)}100%{box-shadow:0 0 0 0 rgba(87,176,131,0)}}
+
+  .tape{border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--ink-2),var(--ink));overflow:hidden;position:relative}
+  .tape::before,.tape::after{content:"";position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+  .tape::before{left:0;background:linear-gradient(90deg,var(--ink),transparent)}
+  .tape::after{right:0;background:linear-gradient(270deg,var(--ink),transparent)}
+  .tape-track{display:flex;white-space:nowrap;width:max-content;animation:scroll 46s linear infinite}
+  .tape:hover .tape-track{animation-play-state:paused}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .tick{display:inline-flex;align-items:baseline;gap:9px;padding:11px 26px;border-right:1px solid var(--line-soft);font-size:13px}
+  .tick .t-label{color:var(--slate);letter-spacing:.04em}
+  .tick .t-val{font-family:"IBM Plex Mono",monospace;color:var(--bone);font-weight:500}
+  .tick .t-chg{font-family:"IBM Plex Mono",monospace;font-size:12px}
+  .up{color:var(--pos)} .down{color:var(--neg)} .flat{color:var(--slate)}
+
+  .hero{padding:56px 0 30px}
+  .hero h1{font-family:"Newsreader",Georgia,serif;font-weight:400;font-size:clamp(34px,5.4vw,58px);
+    line-height:1.02;margin:14px 0 0;letter-spacing:-.01em;max-width:16ch}
+  .hero h1 em{font-style:italic;color:var(--brass-2)}
+  .hero .sub{margin:20px 0 0;max-width:60ch;color:var(--bone-dim);font-size:16.5px}
+  .hero .stamp{margin-top:18px;color:var(--slate);font-size:12.5px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .hero .stamp .pill{border:1px solid var(--line);border-radius:999px;padding:4px 11px;color:var(--bone-dim)}
+
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+  .card{grid-column:span 2;background:linear-gradient(180deg,var(--panel),var(--ink-2));
+    border:1px solid var(--line);border-radius:12px;padding:18px 18px 16px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;transition:border-color .25s,transform .25s}
+  .card::after{content:"";position:absolute;left:0;top:0;height:100%;width:3px;
+    background:linear-gradient(180deg,var(--brass),var(--brass-deep));opacity:0;transition:opacity .25s}
+  .card:hover{border-color:#3A506B;transform:translateY(-2px)}
+  .card:hover::after{opacity:.9}
+  .card .c-top{display:flex;align-items:center;justify-content:space-between}
+  .card .c-label{font-family:"IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.13em;font-size:10.5px;color:var(--slate)}
+  .card .c-src{font-size:10px;color:var(--slate-2);font-family:"IBM Plex Mono",monospace}
+  .card .c-val{font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:38px;line-height:1;
+    margin:16px 0 2px;color:var(--bone);letter-spacing:-.01em}
+  .card .c-val .u{font-size:18px;color:var(--slate);margin-left:2px}
+  .card .c-delta{font-family:"IBM Plex Mono",monospace;font-size:12.5px;display:flex;align-items:center;gap:7px;height:18px}
+  .card .c-delta .arrow{font-size:11px}
+  .spark{margin-top:14px;height:40px;width:100%;display:block}
+  .card .c-foot{margin-top:12px;padding-top:11px;border-top:1px solid var(--line-soft);
+    display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--slate)}
+  .card .c-foot .go{color:var(--brass);opacity:0;transform:translateX(-4px);transition:.25s;font-family:"IBM Plex Mono",monospace}
+  .card:hover .c-foot .go{opacity:1;transform:translateX(0)}
+
+  .rows{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .rcard{background:linear-gradient(180deg,var(--panel),var(--ink-2));border:1px solid var(--line);
+    border-radius:12px;padding:22px 20px;display:flex;flex-direction:column;gap:10px;min-height:172px;
+    position:relative;transition:border-color .25s,transform .25s;box-shadow:var(--shadow)}
+  .rcard:hover{border-color:#3A506B;transform:translateY(-2px)}
+  .rcard .r-kick{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
+  .rcard h3{font-family:"Newsreader",serif;font-weight:500;font-size:22px;margin:2px 0 0;line-height:1.12}
+  .rcard p{margin:0;color:var(--bone-dim);font-size:14px;line-height:1.5}
+  .rcard .r-link{margin-top:auto;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--bone);display:inline-flex;align-items:center;gap:8px}
+  .rcard .r-link .host{color:var(--slate)}
+  .rcard .r-link .ar{color:var(--brass);transition:transform .25s}
+  .rcard:hover .r-link .ar{transform:translateX(4px)}
+  .rcard.feature{background:radial-gradient(420px 220px at 88% 0%, rgba(198,151,73,.14), transparent 70%),linear-gradient(180deg,var(--panel-2),var(--ink-2));border-color:#3B4E66}
+
+  .commentary{display:grid;grid-template-columns:1.15fr 1fr;gap:14px;margin-top:14px}
+  .panel{background:linear-gradient(180deg,var(--panel),var(--ink-2));border:1px solid var(--line);border-radius:12px;padding:22px;box-shadow:var(--shadow)}
+  .panel .p-kick{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
+  .panel h3{font-family:"Newsreader",serif;font-weight:500;font-size:23px;margin:6px 0 4px}
+  .panel .p-desc{color:var(--bone-dim);font-size:14px;margin:0 0 16px}
+  .post{display:flex;gap:14px;padding:13px 0;border-top:1px solid var(--line-soft);align-items:baseline}
+  .post:first-of-type{border-top:none}
+  .post .p-date{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--slate);white-space:nowrap;min-width:52px}
+  .post .p-title{font-size:14.5px;color:var(--bone);line-height:1.4}
+  .post .p-title span{display:block;color:var(--slate);font-size:12px;margin-top:2px}
+  .subwrap{display:flex;flex-direction:column}
+  .subwrap .sub-note{margin-top:auto;font-size:11.5px;color:var(--slate);border-top:1px dashed var(--line);padding-top:12px}
+  .field{display:flex;gap:8px;margin:4px 0 14px}
+  .field input{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:11px 13px;color:var(--bone);font-family:"IBM Plex Mono",monospace;font-size:13px}
+  .field input::placeholder{color:var(--slate-2)}
+  .field input:focus{outline:none;border-color:var(--brass)}
+  .r-link{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--bone);display:inline-flex;align-items:center;gap:8px}
+  .r-link .host{color:var(--slate)} .r-link .ar{color:var(--brass)}
+
+  @media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.card{grid-column:span 1}.rows{grid-template-columns:1fr}.commentary{grid-template-columns:1fr}}
+  @media (max-width:560px){.grid{grid-template-columns:1fr}.hero{padding:38px 0 20px}.mast-meta{text-align:left}}
+  @media (prefers-reduced-motion:reduce){.tape-track{animation:none}.dot{animation:none}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap mast-inner">
+    <div class="brand">
+      <div class="name">Alfie Meek, <b>Ph.D.</b></div>
+      <div class="role"><span class="rule"></span> Economist · Fiscal &amp; Economic Impact Analysis</div>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="active">The Economy</a>
+      <a href="bio.html">Bio</a>
+      <a href="https://www.alfiemeek.com" class="ext" target="_blank" rel="noopener">Weekly Update</a>
+      <a href="https://economicsguru.com" class="ext" target="_blank" rel="noopener">Charts</a>
+    </nav>
+  </div>
+</header>
+
+<div class="tape" aria-hidden="true"><div class="tape-track" id="tape"></div></div>
+
+<section class="wrap hero">
+  <div class="eyebrow">The U.S. Economy</div>
+  <h1>The economy, <em>at a glance.</em></h1>
+  <p class="sub">A plain-language read on where things stand — inflation-adjusted growth, jobs, rates, and spending — pulled from the latest federal releases and refreshed as new data lands.</p>
+  <div class="stamp">
+    <span class="pill" id="updated"><span class="dot" style="display:inline-block;margin-right:7px;vertical-align:middle"></span>Updated —</span>
+    <span class="pill">Source data: BLS · Federal Reserve · U.S. Census</span>
+    <span id="asof-note">Latest release —</span>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="section-head">
+    <h2>Key indicators</h2>
+    <div class="aside">Snapshot of six core gauges · full history at <a href="https://economicsguru.com" target="_blank" rel="noopener">economicsguru.com</a></div>
+  </div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<!-- AUTHOR BAND -->
+<section class="wrap" style="margin-top:38px">
+  <div class="author">
+    <img class="photo" src="assets/headshot.jpg"
+         onerror="this.onerror=null;this.src='assets/headshot-placeholder.svg'"
+         alt="Dr. Alfie Meek">
+    <div class="a-body">
+      <div class="a-kick">Your economist</div>
+      <h3>Alfie Meek, Ph.D.</h3>
+      <p>Nationally recognized economist and director of Georgia Tech's Center for Economic Development Research, with 30 years turning economic and fiscal data into decisions for state and local leaders. The numbers above are the raw material — the reason to read on is what they mean.</p>
+    </div>
+    <div class="a-cta">
+      <a class="btn" href="bio.html">Full bio →</a>
+      <a class="btn ghost" href="https://www.alfiemeek.com" target="_blank" rel="noopener">Weekly update</a>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="section-head">
+    <h2>This week's read</h2>
+    <div class="aside">Dr. Meek's Weekly Economic Update</div>
+  </div>
+  <div class="commentary">
+    <div class="panel">
+      <div class="p-kick">Latest commentary</div>
+      <h3>Weekly Economic Update</h3>
+      <p class="p-desc">Short, jargon-free analysis of the week's data and what it means for communities, budgets, and development decisions.</p>
+      <div id="posts">
+        <div class="post"><span class="p-date">newest</span><span class="p-title">Your three most recent Substack posts list here automatically<span>pulled live from the www.alfiemeek.com feed</span></span></div>
+        <div class="post"><span class="p-date">·</span><span class="p-title">Second-most-recent post title<span>headline + one-line standfirst</span></span></div>
+        <div class="post"><span class="p-date">·</span><span class="p-title">Third-most-recent post title<span>headline + one-line standfirst</span></span></div>
+      </div>
+    </div>
+    <div class="panel subwrap">
+      <div class="p-kick">Never miss a release</div>
+      <h3>Get it in your inbox</h3>
+      <p class="p-desc">Free weekly. Join local officials, developers, and journalists who read Dr. Meek first.</p>
+      <div class="field">
+        <input type="email" placeholder="you@example.com" aria-label="Email address">
+        <button class="btn" onclick="window.open('https://www.alfiemeek.com','_blank')">Subscribe</button>
+      </div>
+      <a class="r-link" href="https://www.alfiemeek.com" target="_blank" rel="noopener" style="margin-bottom:14px">
+        <span>Read the full archive</span><span class="host">www.alfiemeek.com</span><span class="ar">→</span></a>
+      <div class="sub-note">Prototype note: this panel can host the native Substack subscribe embed, and the post list can auto-populate from your RSS feed. Swap-in snippet is one line.</div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="section-head">
+    <h2>Go deeper</h2>
+    <div class="aside">The full toolkit</div>
+  </div>
+  <div class="rows">
+    <a class="rcard feature" href="https://economicsguru.com" target="_blank" rel="noopener">
+      <div class="r-kick">Charts &amp; data</div><h3>Economics Guru</h3>
+      <p>Hundreds of charts across inflation, jobs, rates, housing, and more — auto-updated from the source APIs.</p>
+      <span class="r-link"><span>Explore every chart</span><span class="host">economicsguru.com</span><span class="ar">→</span></span>
+    </a>
+    <a class="rcard feature" href="https://georgiaeconomics.com" target="_blank" rel="noopener">
+      <div class="r-kick">Regional focus</div><h3>Georgia Economics</h3>
+      <p>Live, continually updated data on Georgia's economy — the metrics that matter to state and local decision-makers.</p>
+      <span class="r-link"><span>See Georgia data</span><span class="host">georgiaeconomics.com</span><span class="ar">→</span></span>
+    </a>
+    <a class="rcard" href="https://www.alfiemeek.com" target="_blank" rel="noopener">
+      <div class="r-kick">Analysis</div><h3>Weekly Update</h3>
+      <p>The narrative behind the numbers — Dr. Meek's weekly take on what the latest releases actually mean.</p>
+      <span class="r-link"><span>Read &amp; subscribe</span><span class="host">www.alfiemeek.com</span><span class="ar">→</span></span>
+    </a>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="section-head">
+    <h2>Work with Dr. Meek</h2>
+    <div class="aside">Consulting · Software · Modeling</div>
+  </div>
+  <div class="rows">
+    <a class="rcard" href="https://economicimpact.com" target="_blank" rel="noopener">
+      <div class="r-kick">Consulting</div><h3>Economic Impact Group</h3>
+      <p>Economic and fiscal impact analysis for state and local economic development since 2002.</p>
+      <span class="r-link"><span>About EIG</span><span class="host">economicimpact.com</span><span class="ar">→</span></span>
+    </a>
+    <a class="rcard" href="https://loci.online" target="_blank" rel="noopener">
+      <div class="r-kick">Software</div><h3>LOCI™</h3>
+      <p>The gold-standard fiscal impact model — the true cost of development and incentives to local governments.</p>
+      <span class="r-link"><span>See LOCI</span><span class="host">loci.online</span><span class="ar">→</span></span>
+    </a>
+    <a class="rcard" href="https://economicimpact.io" target="_blank" rel="noopener">
+      <div class="r-kick">New · Modeling</div><h3>Georgia Input-Output Model</h3>
+      <p>A purpose-built I-O model for tracing how economic activity ripples through Georgia's economy.</p>
+      <span class="r-link"><span>Explore the model</span><span class="host">economicimpact.io</span><span class="ar">→</span></span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="brand">
+        <div class="name" style="font-size:22px">Alfie Meek, <b>Ph.D.</b></div>
+        <div class="role"><span class="rule"></span> Economist</div>
+      </div>
+      <div class="foot-links">
+        <a href="bio.html">Bio</a>
+        <a href="https://www.alfiemeek.com" target="_blank" rel="noopener">Weekly Update</a>
+        <a href="https://economicsguru.com" target="_blank" rel="noopener">Charts</a>
+        <a href="https://georgiaeconomics.com" target="_blank" rel="noopener">Georgia Data</a>
+        <a href="https://economicimpact.com" target="_blank" rel="noopener">EIG</a>
+        <a href="https://loci.online" target="_blank" rel="noopener">LOCI™</a>
+        <a href="https://economicimpact.io" target="_blank" rel="noopener">GA I-O Model</a>
+      </div>
+    </div>
+    <p class="disc">This is Dr. Meek's personal website and is not affiliated in any way with any other organization. Any opinions expressed here are solely those of Dr. Meek. Indicator figures are drawn from public federal data releases and are provided for general information, not as investment advice.</p>
+    <div class="copy" id="copyline">© Alfie Meek, Ph.D.</div>
+  </div>
+</footer>
+
+<script>
+const DATA = {
+  updated: "2026-07-14",
+  indicators: [
+    { id:"payrolls", label:"Job growth", unit:"K", asof:"2026-06-01", source:"BLS",
+      value:432, prior:685, fmt:"signed_k", good:"up",
+      ctx:"jobs added in June", spark:[-213,486,537,962,685,432], href:"https://economicsguru.com" },
+    { id:"unemployment", label:"Unemployment", unit:"%", asof:"2026-06-01", source:"BLS",
+      value:4.2, prior:4.3, fmt:"pct", good:"down",
+      ctx:"vs 4.3% prior", spark:[4.1,4.3,4.3,4.4,4.5,4.4,4.3,4.4,4.3,4.3,4.3,4.2], href:"https://economicsguru.com" },
+    { id:"retail", label:"Retail sales", unit:"% y/y", asof:"2026-05-01", source:"Census",
+      value:5.7, prior:4.7, fmt:"pct", good:"up",
+      ctx:"year-over-year growth", spark:[3.8,5.2,4.7,5.7], href:"https://economicsguru.com" },
+    { id:"fedfunds", label:"Fed funds rate", unit:"%", asof:"2026-06-01", source:"Fed. Reserve",
+      value:3.63, prior:3.63, fmt:"pct", good:null,
+      ctx:"effective rate", spark:[3.88,3.72,3.64,3.64,3.64,3.64,3.63,3.63], href:"https://economicsguru.com" },
+    { id:"treasury10", label:"10-yr Treasury", unit:"%", asof:"2026-06-01", source:"Fed. Reserve",
+      value:4.47, prior:4.48, fmt:"pct", good:null,
+      ctx:"constant maturity", spark:[4.09,4.14,4.21,4.13,4.25,4.32,4.48,4.47], href:"https://economicsguru.com" },
+    { id:"inflation", label:"Inflation (CPI)", unit:"% y/y", asof:"2026-06-01", source:"BLS",
+      value:null, prior:null, fmt:"pct", good:"down",
+      ctx:"connects to your live feed", spark:[], href:"https://economicsguru.com" }
+  ]
+};
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function monthYear(iso){const d=new Date(iso+"T00:00:00");return MONTHS[d.getMonth()]+" "+d.getFullYear();}
+function fmtVal(v,fmt){
+  if(v===null||v===undefined)return "—";
+  if(fmt==="signed_k")return (v>0?"+":"")+v;
+  if(fmt==="pct")return v.toFixed(v%1===0?0:(Math.abs(v)<10?2:1)).replace(/\.00$/,"");
+  return v;
+}
+function deltaInfo(ind){
+  if(ind.value===null||ind.prior===null)return {arrow:"·",cls:"flat",text:ind.ctx};
+  const d=+(ind.value-ind.prior).toFixed(2);
+  let cls="flat",arrow="→";
+  if(d>0)arrow="▲";else if(d<0)arrow="▼";
+  if(ind.good){const goodUp=ind.good==="up";
+    if(d>0)cls=goodUp?"up":"down";else if(d<0)cls=goodUp?"down":"up";}
+  let dtxt;
+  if(ind.fmt==="signed_k")dtxt=(d>0?"+":"")+d+"K vs prior";
+  else dtxt=(d>0?"+":"")+d+(ind.unit.includes("%")?" pt":"")+" vs prior";
+  return {arrow,cls,text:d===0?ind.ctx:dtxt};
+}
+function sparkline(vals,cls){
+  if(!vals||vals.length<2)
+    return '<svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none"><line x1="0" y1="20" x2="200" y2="20" stroke="var(--line)" stroke-dasharray="3 4"/></svg>';
+  const w=200,h=40,pad=4,min=Math.min(...vals),max=Math.max(...vals),rng=(max-min)||1;
+  const pts=vals.map((v,i)=>[pad+(i*(w-2*pad)/(vals.length-1)),h-pad-((v-min)/rng)*(h-2*pad)]);
+  const line=pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
+  const area="M"+pts[0][0].toFixed(1)+","+(h-pad)+" L"+line.replace(/ /g," L")+" L"+pts[pts.length-1][0].toFixed(1)+","+(h-pad)+" Z";
+  const stroke=cls==="up"?"var(--pos)":cls==="down"?"var(--neg)":"var(--brass)";
+  const end=pts[pts.length-1],gid="g"+Math.random().toString(36).slice(2,7);
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${stroke}" stop-opacity=".22"/><stop offset="1" stop-color="${stroke}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${area}" fill="url(#${gid})"/>
+    <polyline points="${line}" fill="none" stroke="${stroke}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${end[0].toFixed(1)}" cy="${end[1].toFixed(1)}" r="2.6" fill="${stroke}"/></svg>`;
+}
+function build(){
+  const reduce=window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const grid=document.getElementById("grid");
+  DATA.indicators.forEach(ind=>{
+    const d=deltaInfo(ind);const a=document.createElement("a");
+    a.className="card";a.href=ind.href;a.target="_blank";a.rel="noopener";
+    a.innerHTML=`<div class="c-top"><span class="c-label">${ind.label}</span><span class="c-src">${ind.source}</span></div>
+      <div class="c-val"><span data-val="${ind.value===null?'':ind.value}" data-fmt="${ind.fmt}">${ind.value===null?'—':fmtVal(ind.value,ind.fmt)}</span><span class="u">${ind.unit}</span></div>
+      <div class="c-delta ${d.cls}"><span class="arrow">${d.arrow}</span><span>${d.text}</span></div>
+      ${sparkline(ind.spark,d.cls)}
+      <div class="c-foot"><span>as of ${monthYear(ind.asof)}</span><span class="go">full chart →</span></div>`;
+    grid.appendChild(a);
+  });
+  const set=(id,txt)=>{const el=document.getElementById(id);if(el)el.textContent=txt;};
+  const upd=new Date(DATA.updated+"T00:00:00");
+  const updEl=document.getElementById("updated");
+  if(updEl)updEl.innerHTML='<span class="dot" style="display:inline-block;margin-right:7px;vertical-align:middle"></span>Updated '+MONTHS[upd.getMonth()]+" "+upd.getDate()+", "+upd.getFullYear();
+  const latest=DATA.indicators.map(i=>i.asof).sort().slice(-1)[0];
+  set("asof-note","Latest release: "+monthYear(latest));
+  set("copyline","© "+upd.getFullYear()+" Alfie Meek, Ph.D. · Personal site");
+  buildTape();if(!reduce)countUp();
+}
+function buildTape(){
+  const t=document.getElementById("tape");
+  const items=DATA.indicators.filter(i=>i.value!==null).map(ind=>{
+    const d=deltaInfo(ind);
+    return `<span class="tick"><span class="t-label">${ind.label.toUpperCase()}</span>
+      <span class="t-val">${fmtVal(ind.value,ind.fmt)}${ind.unit.replace(' y/y','')}</span>
+      <span class="t-chg ${d.cls}">${d.arrow}</span></span>`;
+  }).join("");
+  t.innerHTML=items+items;
+}
+function countUp(){
+  document.querySelectorAll(".c-val [data-val]").forEach(el=>{
+    const target=el.getAttribute("data-val");if(target==="")return;
+    const fmt=el.getAttribute("data-fmt"),end=parseFloat(target),dur=850,t0=performance.now();
+    function step(now){const p=Math.min((now-t0)/dur,1),e=1-Math.pow(1-p,3);
+      el.textContent=fmtVal(+(end*e).toFixed(2),fmt);
+      if(p<1)requestAnimationFrame(step);else el.textContent=fmtVal(end,fmt);}
+    requestAnimationFrame(step);
+  });
+}
+build();
+</script>
+</body>
+</html>

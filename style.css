@@ -1,0 +1,144 @@
+/* =============================================================
+   alfie.com — shared styles
+   Instrument-panel aesthetic: ink + brass, Newsreader + IBM Plex
+   Used by index.html (dashboard) and bio.html
+   ============================================================= */
+:root{
+  --ink:#131C28; --ink-2:#182231; --panel:#1C2836; --panel-2:#213042;
+  --line:#2C3D52; --line-soft:#243347;
+  --bone:#ECE6D8; --bone-dim:#C3CAD4; --slate:#8494A6; --slate-2:#657485;
+  --brass:#C69749; --brass-2:#E4C689; --brass-deep:#9C7433;
+  --pos:#57B083; --neg:#D06B4F;
+  --shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 18px 40px -24px rgba(0,0,0,.7);
+  --maxw:1140px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 620px at 78% -8%, #1B2838 0%, rgba(27,40,56,0) 60%),
+    radial-gradient(900px 500px at 8% 4%, #17222F 0%, rgba(23,34,47,0) 55%),
+    var(--ink);
+  color:var(--bone);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  font-size:16px;line-height:1.55;letter-spacing:.005em;-webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.eyebrow{font-family:"IBM Plex Mono",monospace;text-transform:uppercase;
+  letter-spacing:.22em;font-size:11px;color:var(--brass);font-weight:500}
+
+/* ---------- Masthead + nav ---------- */
+.masthead{border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(20,30,43,.6),rgba(20,30,43,0))}
+.mast-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px 0 18px}
+.brand{display:flex;flex-direction:column;gap:3px}
+.brand .name{font-family:"Newsreader",Georgia,serif;font-weight:500;font-size:27px;
+  line-height:1;letter-spacing:.01em;color:var(--bone)}
+.brand .name b{font-weight:600}
+.brand .role{display:flex;align-items:center;gap:10px;color:var(--slate);font-size:12.5px;letter-spacing:.03em}
+.brand .role .rule{width:26px;height:1px;background:var(--brass);opacity:.8}
+.nav{display:flex;align-items:center;gap:22px;font-size:13.5px}
+.nav a{color:var(--bone-dim);position:relative;padding:4px 0;transition:color .2s}
+.nav a:hover{color:var(--bone)}
+.nav a.active{color:var(--brass-2)}
+.nav a.active::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:1px;background:var(--brass)}
+.nav a.ext::after{content:"↗";font-size:9px;vertical-align:super;color:var(--slate-2);margin-left:2px}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;gap:9px;background:var(--brass);color:#20160A;
+  font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:13px;letter-spacing:.02em;
+  padding:11px 16px;border-radius:8px;border:none;cursor:pointer;transition:.2s;align-self:flex-start}
+.btn:hover{background:var(--brass-2)}
+.btn.ghost{background:transparent;color:var(--bone);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--brass);color:var(--brass-2)}
+
+/* ---------- Section head ---------- */
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  margin:38px 0 16px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.section-head h2{font-family:"Newsreader",serif;font-weight:500;font-size:21px;margin:0;letter-spacing:.01em}
+.section-head .aside{color:var(--slate);font-size:12.5px}
+.section-head .aside a{color:var(--brass);border-bottom:1px solid rgba(198,151,73,.35);padding-bottom:1px}
+.section-head .aside a:hover{color:var(--brass-2)}
+
+/* ---------- Footer ---------- */
+footer{margin-top:56px;border-top:1px solid var(--line);padding:30px 0 46px;color:var(--slate)}
+.foot-grid{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.foot-links{display:flex;gap:22px;flex-wrap:wrap;font-size:13px}
+.foot-links a{color:var(--bone-dim)}
+.foot-links a:hover{color:var(--brass-2)}
+.disc{max-width:64ch;font-size:11.5px;line-height:1.6;color:var(--slate-2);margin-top:20px;
+  font-style:italic;font-family:"Newsreader",serif}
+.copy{margin-top:14px;font-size:11px;color:var(--slate-2);font-family:"IBM Plex Mono",monospace}
+
+/* ---------- Author band (shared: sits on dashboard) ---------- */
+.author{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;
+  background:
+    radial-gradient(420px 200px at 92% 10%, rgba(198,151,73,.10), transparent 70%),
+    linear-gradient(180deg,var(--panel),var(--ink-2));
+  border:1px solid var(--line);border-radius:14px;padding:22px 26px;box-shadow:var(--shadow)}
+.author .photo{width:96px;height:96px;border-radius:50%;object-fit:cover;
+  border:2px solid var(--brass-deep);background:var(--ink);display:block}
+.author .a-body .a-kick{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--brass)}
+.author .a-body h3{font-family:"Newsreader",serif;font-weight:500;font-size:23px;margin:3px 0 6px}
+.author .a-body p{margin:0;color:var(--bone-dim);font-size:14.5px;line-height:1.55;max-width:66ch}
+.author .a-cta{display:flex;flex-direction:column;gap:9px;white-space:nowrap}
+
+/* ---------- Bio page ---------- */
+.bio-hero{display:grid;grid-template-columns:300px 1fr;gap:44px;align-items:start;padding:52px 0 20px}
+.bio-portrait{position:relative}
+.bio-portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:14px;
+  border:1px solid var(--line);background:var(--ink-2);display:block;box-shadow:var(--shadow)}
+.bio-portrait .plate{margin-top:14px;border:1px solid var(--line);border-radius:10px;
+  padding:14px 16px;background:linear-gradient(180deg,var(--panel),var(--ink-2))}
+.bio-portrait .plate .row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;
+  font-size:12.5px;border-top:1px solid var(--line-soft)}
+.bio-portrait .plate .row:first-child{border-top:none}
+.bio-portrait .plate .k{color:var(--slate);font-family:"IBM Plex Mono",monospace;font-size:11px;
+  text-transform:uppercase;letter-spacing:.08em}
+.bio-portrait .plate .v{color:var(--bone);text-align:right}
+.bio-lead h1{font-family:"Newsreader",serif;font-weight:400;font-size:clamp(32px,4.6vw,50px);
+  line-height:1.05;margin:12px 0 0;letter-spacing:-.01em}
+.bio-lead h1 em{font-style:italic;color:var(--brass-2)}
+.bio-lead .standfirst{margin:20px 0 0;font-size:18px;line-height:1.6;color:var(--bone-dim);max-width:60ch;
+  font-family:"Newsreader",serif}
+.bio-lead .quicklinks{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap}
+
+.prose{max-width:70ch;margin:8px 0 0}
+.prose h2{font-family:"Newsreader",serif;font-weight:500;font-size:22px;margin:34px 0 10px;
+  padding-top:22px;border-top:1px solid var(--line)}
+.prose p{margin:0 0 15px;color:var(--bone-dim);font-size:16px;line-height:1.7}
+.prose p strong{color:var(--bone);font-weight:600}
+.prose .lede{font-size:17.5px;color:var(--bone)}
+
+/* credentials / facts grid */
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:6px 0 0}
+.fact{border:1px solid var(--line);border-radius:11px;padding:16px 18px;
+  background:linear-gradient(180deg,var(--panel),var(--ink-2))}
+.fact .f-k{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--brass)}
+.fact .f-v{margin-top:6px;font-size:14.5px;color:var(--bone);line-height:1.4}
+.fact .f-v span{display:block;color:var(--slate);font-size:12.5px;margin-top:2px}
+
+.pubnote{border-left:2px solid var(--brass);padding:4px 0 4px 18px;margin:6px 0 4px;
+  color:var(--bone-dim);font-size:15px;line-height:1.65}
+.pubnote b{color:var(--bone)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:900px){
+  .author{grid-template-columns:auto 1fr;}
+  .author .a-cta{grid-column:1 / -1;flex-direction:row}
+  .bio-hero{grid-template-columns:1fr;gap:26px}
+  .bio-portrait{max-width:320px}
+  .facts{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .mast-inner{flex-direction:column;align-items:flex-start;gap:12px}
+  .nav{gap:16px;flex-wrap:wrap}
+  .author{grid-template-columns:1fr;text-align:left}
+  .author .photo{width:84px;height:84px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
