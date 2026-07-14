@@ -42,13 +42,13 @@ new pages must link it and reuse its components rather than restyling.
 - **Charts:** `https://economicsguru.com` (hundreds of auto-updated charts)
 - **Georgia data:** `https://georgiaeconomics.com`
 - **Economic Impact Group** (consulting): `https://economicimpact.com`
-- **LOCI™** (software): `https://loci.online`
+- **LOCI®** (software): `https://loci.online`
 - **Georgia Input-Output Model** (new): `https://economicimpact.io`
 
 ## Bio facts (authoritative — do NOT invent or embellish)
 - **30 years** of experience (Alfie's instruction: use "30 years", not "25+").
 - Director, **Center for Economic Development Research (CEDR)**, Georgia Tech.
-- President & CEO, **Economic Impact Group, LLC**; creator of **LOCI™**.
+- President & CEO, **Economic Impact Group, LLC**; creator of **LOCI®**.
 - Former **Chief Economist & Director of Economic Analysis, Gwinnett County, GA**.
 - Earlier: Director of Applied Research, UGA Business Outreach/SBDC; Research Economist, SunTrust.
 - Focus: fiscal/economic impact analysis, forecasting & modeling, tax policy, target industry.

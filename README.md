@@ -2,7 +2,7 @@
 
 Personal site for Alfie Meek, Ph.D. — a live "at-a-glance" read on the U.S. economy,
 plus bio and links to the full toolkit (Weekly Update, Economics Guru, Georgia Economics,
-Economic Impact Group, LOCI™, and the Georgia Input-Output Model).
+Economic Impact Group, LOCI®, and the Georgia Input-Output Model).
 
 Static HTML/CSS — no build step, no framework.
 
