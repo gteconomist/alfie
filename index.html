@@ -84,8 +84,7 @@
   .post .p-title{font-size:14.5px;color:var(--bone);line-height:1.4}
   .post .p-title span{display:block;color:var(--slate);font-size:12px;margin-top:2px}
   .subwrap{display:flex;flex-direction:column}
-  .sub-embed{width:100%;height:200px;border:1px solid var(--line);border-radius:10px;
-    background:#fff;display:block;margin-top:2px}
+  .sub-note{margin-top:auto;font-size:11.5px;color:var(--slate);border-top:1px dashed var(--line);padding-top:12px}
   a.post{text-decoration:none}
   a.post:hover .p-title{color:var(--brass-2)}
   a.post:hover .p-date{color:var(--brass)}
@@ -171,16 +170,22 @@
       <h3>Weekly Economic Update</h3>
       <p class="p-desc">Short, jargon-free analysis of the week's data and what it means for communities, budgets, and development decisions.</p>
       <div id="posts">
-        <div class="post"><span class="p-date">…</span><span class="p-title">Loading the latest posts<span>pulled live from the www.alfiemeek.com feed</span></span></div>
+        <a class="post" href="https://www.alfiemeek.com/p/weekly-economic-update-07-10-26-ism" target="_blank" rel="noopener"><span class="p-date">newest</span><span class="p-title">Weekly Economic Update 07-10-26: ISM Manufacturing &amp; Services; Consumer Credit; and Existing Home Sales<span>Home prices continue to rise, and consumers take a breather from relying on plastic.</span></span></a>
+        <a class="post" href="https://www.alfiemeek.com/p/weekly-economic-update-07-03-26-consumer" target="_blank" rel="noopener"><span class="p-date">Jul 3</span><span class="p-title">Weekly Economic Update 07-03-26: Consumer Confidence; Case-Shiller Home Price Index; JOLTS; and June Employment<span>Happy 250th Birthday, America!!</span></span></a>
+        <a class="post" href="https://www.alfiemeek.com/p/weekly-economic-update-06-26-26-new" target="_blank" rel="noopener"><span class="p-date">Jun 26</span><span class="p-title">Weekly Economic Update 06-26-26: New Home Sales; Personal Income &amp; Spending; and PCE Inflation<span>Inflation continues to rise, and government checks support consumer income and the savings rate.</span></span></a>
       </div>
     </div>
     <div class="panel subwrap">
       <div class="p-kick">Never miss a release</div>
       <h3>Get it in your inbox</h3>
       <p class="p-desc">Free weekly. Join the 1,000+ local officials, developers, and journalists who read Dr. Meek first.</p>
-      <iframe class="sub-embed" src="https://alfiemeek.substack.com/embed" title="Subscribe to the Weekly Economic Update" loading="lazy"></iframe>
-      <a class="r-link" href="https://www.alfiemeek.com" target="_blank" rel="noopener" style="margin-top:14px">
+      <form class="field" id="subform" novalidate>
+        <input type="email" id="subemail" placeholder="you@example.com" aria-label="Email address" required>
+        <button class="btn" type="submit">Subscribe</button>
+      </form>
+      <a class="r-link" href="https://www.alfiemeek.com" target="_blank" rel="noopener">
         <span>Read the full archive</span><span class="host">www.alfiemeek.com</span><span class="ar">→</span></a>
+      <div class="sub-note">You'll finish signing up on Substack — takes a few seconds.</div>
     </div>
   </div>
 </section>
@@ -223,7 +228,7 @@
     <a class="rcard" href="https://loci.online" target="_blank" rel="noopener">
       <div class="r-kick">Software</div><h3>LOCI™</h3>
       <p>The gold-standard fiscal impact model — the true cost of development and incentives to local governments.</p>
-      <span class="r-link"><span>See LOCI</span><span class="host">loci.online</span><span class="ar">→</span></span>
+      <span class="r-link"><span>See LOCI™</span><span class="host">loci.online</span><span class="ar">→</span></span>
     </a>
     <a class="rcard" href="https://economicimpact.io" target="_blank" rel="noopener">
       <div class="r-kick">New · Modeling</div><h3>Georgia Input-Output Model</h3>
@@ -277,8 +282,8 @@ const DATA = {
       value:4.47, prior:4.48, fmt:"pct", good:null,
       ctx:"constant maturity", spark:[4.09,4.14,4.21,4.13,4.25,4.32,4.48,4.47], href:"https://economicsguru.com" },
     { id:"inflation", label:"Inflation (CPI)", unit:"% y/y", asof:"2026-06-01", source:"BLS",
-      value:null, prior:null, fmt:"pct", good:"down",
-      ctx:"connects to your live feed", spark:[], href:"https://economicsguru.com" }
+      value:3.5, prior:4.2, fmt:"pct", good:"down",
+      ctx:"year-over-year", spark:[2.4,2.4,3.3,3.8,4.2,3.5], href:"https://economicsguru.com" }
   ]
 };
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -367,82 +372,96 @@ function countUp(){
     requestAnimationFrame(step);
   });
 }
-// ---- Live data: Inflation (CPI). Keyless BLS public API, CPI-U (CUUR0000SA0), computed year-over-year.
-// Degrades silently to the "connect your feed" placeholder if the request fails.
-// To wire the other tiles to a live source (FRED key or the economicsguru pipeline), follow this same pattern.
+// ---- Live refresh: Inflation (CPI). The tile ships with a real current snapshot (see DATA above);
+// this best-effort refresh upgrades it in place when the data is reachable. A browser can't call
+// BLS/FRED directly (no CORS on those APIs), so we try BLS and then a read-only proxy — and we
+// NEVER blank the tile if both are unavailable. For true auto-updating across every tile, wire
+// DATA to FRED (your key) or the economicsguru pipeline through a small backend.
 async function loadCPI(){
   const ind=DATA.indicators.find(i=>i.id==="inflation");
   if(!ind)return;
-  try{
-    const yr=new Date().getFullYear();
-    const res=await fetch("https://api.bls.gov/publicAPI/v2/timeseries/data/",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({seriesid:["CUUR0000SA0"],startyear:String(yr-2),endyear:String(yr)})
-    });
-    if(!res.ok)throw new Error("http "+res.status);
-    const j=await res.json();
-    if(j.status!=="REQUEST_SUCCEEDED"||!j.Results||!j.Results.series||!j.Results.series[0].data.length)throw new Error("no data");
+  const series="CUUR0000SA0",yr=new Date().getFullYear();
+  const parse=j=>{
+    if(!j||j.status!=="REQUEST_SUCCEEDED"||!j.Results||!j.Results.series||!j.Results.series[0].data.length)return null;
     const rows=j.Results.series[0].data
       .filter(d=>/^M(0[1-9]|1[0-2])$/.test(d.period))
-      .map(d=>({y:+d.year,m:+d.period.slice(1),v:+d.value,name:d.periodName}))
+      .map(d=>({y:+d.year,m:+d.period.slice(1),v:+d.value}))
       .sort((a,b)=>b.y-a.y||b.m-a.m);
     const idx={};rows.forEach(r=>idx[r.y+"-"+r.m]=r.v);
-    const yoy=r=>{const p=idx[(r.y-1)+"-"+r.m];return p?((r.v/p-1)*100):null;};
-    const series=[];
-    for(const r of rows){const val=yoy(r);if(val!=null)series.push({r,val});if(series.length>=7)break;}
-    if(!series.length)throw new Error("insufficient history");
-    const latest=series[0],prior=series[1];
-    ind.value=+latest.val.toFixed(1);
-    ind.prior=prior?+prior.val.toFixed(1):null;
-    ind.asof=latest.r.y+"-"+String(latest.r.m).padStart(2,"0")+"-01";
-    ind.ctx="year-over-year";
-    ind.spark=series.map(s=>+s.val.toFixed(2)).reverse();
-    renderCard(ind);
-    buildTape();
-    const latestAll=DATA.indicators.map(i=>i.asof).sort().slice(-1)[0];
-    const note=document.getElementById("asof-note");
-    if(note)note.textContent="Latest release: "+monthYear(latestAll);
-  }catch(e){/* keep the placeholder tile; no fabricated number */}
+    const out=[];
+    for(const r of rows){const p=idx[(r.y-1)+"-"+r.m];if(p)out.push({r,val:(r.v/p-1)*100});if(out.length>=6)break;}
+    return out.length>=2?out:null;
+  };
+  const sources=[
+    ()=>fetch("https://api.bls.gov/publicAPI/v2/timeseries/data/",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({seriesid:[series],startyear:String(yr-2),endyear:String(yr)})}),
+    ()=>fetch("https://api.allorigins.win/raw?url="+encodeURIComponent("https://api.bls.gov/publicAPI/v2/timeseries/data/"+series+"?startyear="+(yr-2)+"&endyear="+yr))
+  ];
+  for(const get of sources){
+    try{
+      const res=await get();if(!res.ok)continue;
+      const data=parse(await res.json());if(!data)continue;
+      const latest=data[0],prior=data[1];
+      ind.value=+latest.val.toFixed(1);
+      ind.prior=+prior.val.toFixed(1);
+      ind.asof=latest.r.y+"-"+String(latest.r.m).padStart(2,"0")+"-01";
+      ind.spark=data.map(s=>+s.val.toFixed(2)).reverse();
+      renderCard(ind);buildTape();
+      const note=document.getElementById("asof-note");
+      const latestAll=DATA.indicators.map(i=>i.asof).sort().slice(-1)[0];
+      if(note)note.textContent="Latest release: "+monthYear(latestAll);
+      return;
+    }catch(e){/* try next source, otherwise keep the snapshot */}
+  }
 }
-// ---- This week's read: pull the three most recent posts from the Substack RSS feed.
-// Substack's feed isn't CORS-enabled, so we route through a public read-only proxy and
-// fall back cleanly (no fabricated titles) if every proxy is unavailable.
+// ---- This week's read: ships with the three most recent posts as a snapshot (rendered in #posts).
+// This best-effort refresh replaces them in place when reachable — Substack's archive API first,
+// then a CORS-enabled RSS reader — and keeps the snapshot if neither responds.
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function shortDate(s){const d=new Date(s);return isNaN(d)?"·":MONTHS[d.getMonth()]+" "+d.getDate();}
 async function loadPosts(){
   const box=document.getElementById("posts");if(!box)return;
-  const feed="https://www.alfiemeek.com/feed";
-  const proxies=[
-    u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),
-    u=>"https://corsproxy.io/?url="+encodeURIComponent(u)
-  ];
-  for(const wrap of proxies){
-    try{
-      const res=await fetch(wrap(feed),{cache:"no-store"});
-      if(!res.ok)throw 0;
-      const xml=new DOMParser().parseFromString(await res.text(),"application/xml");
-      if(xml.querySelector("parsererror"))throw 0;
-      const items=[...xml.querySelectorAll("item")].slice(0,3);
-      if(!items.length)throw 0;
-      box.innerHTML=items.map((it,i)=>{
-        const title=(it.querySelector("title")?.textContent||"").trim();
-        const link=(it.querySelector("link")?.textContent||feed).trim();
-        const date=i===0?"newest":shortDate(it.querySelector("pubDate")?.textContent);
-        return `<a class="post" href="${esc(link)}" target="_blank" rel="noopener">`
-          +`<span class="p-date">${esc(date)}</span>`
-          +`<span class="p-title">${esc(title)}</span></a>`;
-      }).join("");
-      return;
-    }catch(e){/* try the next proxy */}
-  }
-  box.innerHTML=`<a class="post" href="https://www.alfiemeek.com" target="_blank" rel="noopener">`
-    +`<span class="p-date">read</span>`
-    +`<span class="p-title">See the latest posts on Substack`
-    +`<span>Opens the live archive at www.alfiemeek.com</span></span></a>`;
+  const render=list=>{
+    const items=(list||[]).slice(0,3).filter(p=>p.title&&p.url);
+    if(items.length<3)return false;
+    box.innerHTML=items.map((p,i)=>
+      `<a class="post" href="${esc(p.url)}" target="_blank" rel="noopener">`
+      +`<span class="p-date">${i===0?"newest":esc(shortDate(p.date))}</span>`
+      +`<span class="p-title">${esc(p.title)}`
+      +(p.subtitle?`<span>${esc(p.subtitle)}</span>`:"")
+      +`</span></a>`).join("");
+    return true;
+  };
+  // 1) Substack archive API — richest data (title + subtitle + canonical link)
+  try{
+    const r=await fetch("https://www.alfiemeek.com/api/v1/archive?sort=new&limit=3",{cache:"no-store"});
+    if(r.ok){
+      const arr=await r.json();
+      if(Array.isArray(arr)&&render(arr.map(p=>({title:p.title,url:p.canonical_url,date:p.post_date,subtitle:p.subtitle||p.description||""}))))return;
+    }
+  }catch(e){}
+  // 2) rss2json — CORS-enabled RSS reader
+  try{
+    const r=await fetch("https://api.rss2json.com/v1/api.json?count=3&rss_url="+encodeURIComponent("https://www.alfiemeek.com/feed"),{cache:"no-store"});
+    if(r.ok){
+      const j=await r.json();
+      if(j&&j.status==="ok"&&Array.isArray(j.items))
+        render(j.items.map(p=>({title:p.title,url:p.link,date:p.pubDate,subtitle:(p.description||"").replace(/<[^>]+>/g,"").trim().slice(0,110)})));
+    }
+  }catch(e){/* keep the snapshot */}
+}
+function wireSubscribe(){
+  const f=document.getElementById("subform");if(!f)return;
+  f.addEventListener("submit",e=>{
+    e.preventDefault();
+    const email=(document.getElementById("subemail").value||"").trim();
+    const url="https://www.alfiemeek.com/subscribe"+(email?"?email="+encodeURIComponent(email):"");
+    window.open(url,"_blank","noopener");
+  });
 }
 build();
 loadCPI();
 loadPosts();
+wireSubscribe();
 </script>
 </body>
 </html>
