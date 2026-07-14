@@ -84,7 +84,11 @@
   .post .p-title{font-size:14.5px;color:var(--bone);line-height:1.4}
   .post .p-title span{display:block;color:var(--slate);font-size:12px;margin-top:2px}
   .subwrap{display:flex;flex-direction:column}
-  .subwrap .sub-note{margin-top:auto;font-size:11.5px;color:var(--slate);border-top:1px dashed var(--line);padding-top:12px}
+  .sub-embed{width:100%;height:200px;border:1px solid var(--line);border-radius:10px;
+    background:#fff;display:block;margin-top:2px}
+  a.post{text-decoration:none}
+  a.post:hover .p-title{color:var(--brass-2)}
+  a.post:hover .p-date{color:var(--brass)}
   .field{display:flex;gap:8px;margin:4px 0 14px}
   .field input{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:11px 13px;color:var(--bone);font-family:"IBM Plex Mono",monospace;font-size:13px}
   .field input::placeholder{color:var(--slate-2)}
@@ -108,6 +112,9 @@
     <nav class="nav">
       <a href="index.html" class="active">The Economy</a>
       <a href="bio.html">Bio</a>
+      <a href="research.html">Research</a>
+      <a href="loci.html">LOCI™</a>
+      <a href="contact.html">Contact</a>
       <a href="https://www.alfiemeek.com" class="ext" target="_blank" rel="noopener">Weekly Update</a>
       <a href="https://economicsguru.com" class="ext" target="_blank" rel="noopener">Charts</a>
     </nav>
@@ -164,22 +171,16 @@
       <h3>Weekly Economic Update</h3>
       <p class="p-desc">Short, jargon-free analysis of the week's data and what it means for communities, budgets, and development decisions.</p>
       <div id="posts">
-        <div class="post"><span class="p-date">newest</span><span class="p-title">Your three most recent Substack posts list here automatically<span>pulled live from the www.alfiemeek.com feed</span></span></div>
-        <div class="post"><span class="p-date">·</span><span class="p-title">Second-most-recent post title<span>headline + one-line standfirst</span></span></div>
-        <div class="post"><span class="p-date">·</span><span class="p-title">Third-most-recent post title<span>headline + one-line standfirst</span></span></div>
+        <div class="post"><span class="p-date">…</span><span class="p-title">Loading the latest posts<span>pulled live from the www.alfiemeek.com feed</span></span></div>
       </div>
     </div>
     <div class="panel subwrap">
       <div class="p-kick">Never miss a release</div>
       <h3>Get it in your inbox</h3>
-      <p class="p-desc">Free weekly. Join local officials, developers, and journalists who read Dr. Meek first.</p>
-      <div class="field">
-        <input type="email" placeholder="you@example.com" aria-label="Email address">
-        <button class="btn" onclick="window.open('https://www.alfiemeek.com','_blank')">Subscribe</button>
-      </div>
-      <a class="r-link" href="https://www.alfiemeek.com" target="_blank" rel="noopener" style="margin-bottom:14px">
+      <p class="p-desc">Free weekly. Join the 1,000+ local officials, developers, and journalists who read Dr. Meek first.</p>
+      <iframe class="sub-embed" src="https://alfiemeek.substack.com/embed" title="Subscribe to the Weekly Economic Update" loading="lazy"></iframe>
+      <a class="r-link" href="https://www.alfiemeek.com" target="_blank" rel="noopener" style="margin-top:14px">
         <span>Read the full archive</span><span class="host">www.alfiemeek.com</span><span class="ar">→</span></a>
-      <div class="sub-note">Prototype note: this panel can host the native Substack subscribe embed, and the post list can auto-populate from your RSS feed. Swap-in snippet is one line.</div>
     </div>
   </div>
 </section>
@@ -241,6 +242,8 @@
       </div>
       <div class="foot-links">
         <a href="bio.html">Bio</a>
+        <a href="research.html">Research</a>
+        <a href="contact.html">Contact</a>
         <a href="https://www.alfiemeek.com" target="_blank" rel="noopener">Weekly Update</a>
         <a href="https://economicsguru.com" target="_blank" rel="noopener">Charts</a>
         <a href="https://georgiaeconomics.com" target="_blank" rel="noopener">Georgia Data</a>
@@ -314,17 +317,25 @@ function sparkline(vals,cls){
     <polyline points="${line}" fill="none" stroke="${stroke}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
     <circle cx="${end[0].toFixed(1)}" cy="${end[1].toFixed(1)}" r="2.6" fill="${stroke}"/></svg>`;
 }
-function build(){
-  const reduce=window.matchMedia("(prefers-reduced-motion:reduce)").matches;
-  const grid=document.getElementById("grid");
-  DATA.indicators.forEach(ind=>{
-    const d=deltaInfo(ind);const a=document.createElement("a");
-    a.className="card";a.href=ind.href;a.target="_blank";a.rel="noopener";
-    a.innerHTML=`<div class="c-top"><span class="c-label">${ind.label}</span><span class="c-src">${ind.source}</span></div>
+function cardHTML(ind){
+  const d=deltaInfo(ind);
+  return `<div class="c-top"><span class="c-label">${ind.label}</span><span class="c-src">${ind.source}</span></div>
       <div class="c-val"><span data-val="${ind.value===null?'':ind.value}" data-fmt="${ind.fmt}">${ind.value===null?'—':fmtVal(ind.value,ind.fmt)}</span><span class="u">${ind.unit}</span></div>
       <div class="c-delta ${d.cls}"><span class="arrow">${d.arrow}</span><span>${d.text}</span></div>
       ${sparkline(ind.spark,d.cls)}
       <div class="c-foot"><span>as of ${monthYear(ind.asof)}</span><span class="go">full chart →</span></div>`;
+}
+function renderCard(ind){
+  const a=document.querySelector('.card[data-id="'+ind.id+'"]');
+  if(a)a.innerHTML=cardHTML(ind);
+}
+function build(){
+  const reduce=window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const grid=document.getElementById("grid");
+  DATA.indicators.forEach(ind=>{
+    const a=document.createElement("a");
+    a.className="card";a.dataset.id=ind.id;a.href=ind.href;a.target="_blank";a.rel="noopener";
+    a.innerHTML=cardHTML(ind);
     grid.appendChild(a);
   });
   const set=(id,txt)=>{const el=document.getElementById(id);if(el)el.textContent=txt;};
@@ -356,7 +367,82 @@ function countUp(){
     requestAnimationFrame(step);
   });
 }
+// ---- Live data: Inflation (CPI). Keyless BLS public API, CPI-U (CUUR0000SA0), computed year-over-year.
+// Degrades silently to the "connect your feed" placeholder if the request fails.
+// To wire the other tiles to a live source (FRED key or the economicsguru pipeline), follow this same pattern.
+async function loadCPI(){
+  const ind=DATA.indicators.find(i=>i.id==="inflation");
+  if(!ind)return;
+  try{
+    const yr=new Date().getFullYear();
+    const res=await fetch("https://api.bls.gov/publicAPI/v2/timeseries/data/",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({seriesid:["CUUR0000SA0"],startyear:String(yr-2),endyear:String(yr)})
+    });
+    if(!res.ok)throw new Error("http "+res.status);
+    const j=await res.json();
+    if(j.status!=="REQUEST_SUCCEEDED"||!j.Results||!j.Results.series||!j.Results.series[0].data.length)throw new Error("no data");
+    const rows=j.Results.series[0].data
+      .filter(d=>/^M(0[1-9]|1[0-2])$/.test(d.period))
+      .map(d=>({y:+d.year,m:+d.period.slice(1),v:+d.value,name:d.periodName}))
+      .sort((a,b)=>b.y-a.y||b.m-a.m);
+    const idx={};rows.forEach(r=>idx[r.y+"-"+r.m]=r.v);
+    const yoy=r=>{const p=idx[(r.y-1)+"-"+r.m];return p?((r.v/p-1)*100):null;};
+    const series=[];
+    for(const r of rows){const val=yoy(r);if(val!=null)series.push({r,val});if(series.length>=7)break;}
+    if(!series.length)throw new Error("insufficient history");
+    const latest=series[0],prior=series[1];
+    ind.value=+latest.val.toFixed(1);
+    ind.prior=prior?+prior.val.toFixed(1):null;
+    ind.asof=latest.r.y+"-"+String(latest.r.m).padStart(2,"0")+"-01";
+    ind.ctx="year-over-year";
+    ind.spark=series.map(s=>+s.val.toFixed(2)).reverse();
+    renderCard(ind);
+    buildTape();
+    const latestAll=DATA.indicators.map(i=>i.asof).sort().slice(-1)[0];
+    const note=document.getElementById("asof-note");
+    if(note)note.textContent="Latest release: "+monthYear(latestAll);
+  }catch(e){/* keep the placeholder tile; no fabricated number */}
+}
+// ---- This week's read: pull the three most recent posts from the Substack RSS feed.
+// Substack's feed isn't CORS-enabled, so we route through a public read-only proxy and
+// fall back cleanly (no fabricated titles) if every proxy is unavailable.
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function shortDate(s){const d=new Date(s);return isNaN(d)?"·":MONTHS[d.getMonth()]+" "+d.getDate();}
+async function loadPosts(){
+  const box=document.getElementById("posts");if(!box)return;
+  const feed="https://www.alfiemeek.com/feed";
+  const proxies=[
+    u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),
+    u=>"https://corsproxy.io/?url="+encodeURIComponent(u)
+  ];
+  for(const wrap of proxies){
+    try{
+      const res=await fetch(wrap(feed),{cache:"no-store"});
+      if(!res.ok)throw 0;
+      const xml=new DOMParser().parseFromString(await res.text(),"application/xml");
+      if(xml.querySelector("parsererror"))throw 0;
+      const items=[...xml.querySelectorAll("item")].slice(0,3);
+      if(!items.length)throw 0;
+      box.innerHTML=items.map((it,i)=>{
+        const title=(it.querySelector("title")?.textContent||"").trim();
+        const link=(it.querySelector("link")?.textContent||feed).trim();
+        const date=i===0?"newest":shortDate(it.querySelector("pubDate")?.textContent);
+        return `<a class="post" href="${esc(link)}" target="_blank" rel="noopener">`
+          +`<span class="p-date">${esc(date)}</span>`
+          +`<span class="p-title">${esc(title)}</span></a>`;
+      }).join("");
+      return;
+    }catch(e){/* try the next proxy */}
+  }
+  box.innerHTML=`<a class="post" href="https://www.alfiemeek.com" target="_blank" rel="noopener">`
+    +`<span class="p-date">read</span>`
+    +`<span class="p-title">See the latest posts on Substack`
+    +`<span>Opens the live archive at www.alfiemeek.com</span></span></a>`;
+}
 build();
+loadCPI();
+loadPosts();
 </script>
 </body>
 </html>

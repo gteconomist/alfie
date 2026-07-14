@@ -127,7 +127,62 @@ footer{margin-top:56px;border-top:1px solid var(--line);padding:30px 0 46px;colo
   color:var(--bone-dim);font-size:15px;line-height:1.65}
 .pubnote b{color:var(--bone)}
 
+/* ---------- Interior page hero (LOCI / Research / Contact) ---------- */
+.page-hero{padding:52px 0 8px;max-width:74ch}
+.page-hero h1{font-family:"Newsreader",serif;font-weight:400;font-size:clamp(32px,4.6vw,50px);
+  line-height:1.05;margin:12px 0 0;letter-spacing:-.01em}
+.page-hero h1 em{font-style:italic;color:var(--brass-2)}
+.page-hero .standfirst{margin:20px 0 0;font-size:18px;line-height:1.6;color:var(--bone-dim);
+  max-width:64ch;font-family:"Newsreader",serif}
+.page-hero .quicklinks{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap}
+
+/* tag pills (focus areas, states, methods) */
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 0}
+.tag{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.02em;color:var(--bone-dim);
+  border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:var(--ink-2)}
+.tag.brass{color:var(--brass-2);border-color:var(--brass-deep)}
+
+/* feature list — numbered capability rows (LOCI) */
+.features{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:6px 0 0}
+.feature-item{border:1px solid var(--line);border-radius:12px;padding:20px;
+  background:linear-gradient(180deg,var(--panel),var(--ink-2));box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:8px}
+.feature-item .f-n{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;color:var(--brass)}
+.feature-item h3{font-family:"Newsreader",serif;font-weight:500;font-size:19px;margin:0;line-height:1.15}
+.feature-item p{margin:0;color:var(--bone-dim);font-size:14px;line-height:1.55}
+
+/* research / publication list */
+.pub-list{display:flex;flex-direction:column;gap:0;margin:4px 0 0}
+.pub-item{display:grid;grid-template-columns:132px 1fr;gap:20px;padding:20px 0;
+  border-top:1px solid var(--line)}
+.pub-item:first-child{border-top:none}
+.pub-item .p-meta{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--brass);line-height:1.5}
+.pub-item h3{font-family:"Newsreader",serif;font-weight:500;font-size:19px;margin:0 0 6px;line-height:1.25}
+.pub-item p{margin:0;color:var(--bone-dim);font-size:14.5px;line-height:1.6}
+.pub-item p strong{color:var(--bone);font-weight:600}
+
+/* contact routing grid */
+.contact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:6px 0 0}
+.contact-card{border:1px solid var(--line);border-radius:12px;padding:22px;
+  background:linear-gradient(180deg,var(--panel),var(--ink-2));box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:9px;min-height:150px}
+.contact-card .c-kick{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--brass)}
+.contact-card h3{font-family:"Newsreader",serif;font-weight:500;font-size:21px;margin:0;line-height:1.15}
+.contact-card p{margin:0;color:var(--bone-dim);font-size:14px;line-height:1.55}
+.contact-card .c-act{margin-top:auto;font-family:"IBM Plex Mono",monospace;font-size:13px;
+  color:var(--bone);display:inline-flex;align-items:center;gap:8px;word-break:break-word}
+.contact-card .c-act .host{color:var(--slate)}
+.contact-card .c-act .ar{color:var(--brass);transition:transform .25s}
+.contact-card:hover .c-act .ar{transform:translateX(4px)}
+.contact-card.wide{grid-column:1 / -1}
+
 /* ---------- Responsive ---------- */
+@media (max-width:900px){
+  .features,.contact-grid{grid-template-columns:1fr}
+  .pub-item{grid-template-columns:1fr;gap:8px}
+}
 @media (max-width:900px){
   .author{grid-template-columns:auto 1fr;}
   .author .a-cta{grid-column:1 / -1;flex-direction:row}
